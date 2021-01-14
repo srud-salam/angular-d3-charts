@@ -1,0 +1,26 @@
+::ng-deep .line {
+    fill: none;
+    stroke: #ffab00;
+    stroke-width: 1.5;
+}
+
+::ng-deep .overlay {
+    fill: none;
+    pointer-events: all;
+}
+
+::ng-deep .dot {
+    fill: #ffab00;
+    stroke: #ffab00;
+}
+
+::ng-deep .line-chart-title {
+    fill: #ffab00;
+}
+
+.chart {
+    width: 90%;
+    height: 90%;
+    min-height: 300px;
+    margin: 20px 30px;
+}

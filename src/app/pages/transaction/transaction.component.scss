@@ -1,0 +1,36 @@
+mat-grid-tile {
+  //border: 2px solid red;
+  box-shadow: 0 0 4px #888888;
+}
+
+::ng-deep mat-selection-list {
+  max-height: 100%;
+  overflow: auto;
+  height: 400px;
+  border: 1px solid #888888;
+}
+
+::ng-deep .title {
+  width: 100%;
+}
+
+::ng-deep .mat-grid-tile .mat-figure {
+  display: block;
+}
+
+::ng-deep .mat-card-image:first-child {
+  margin-top: 16px !important;
+}
+
+::ng-deep .center {
+  display: flex;
+  justify-content: center;
+}
+
+.mat-form-field {
+  display: block;
+  position: relative;
+  text-align: left;
+  border: 1px solid #888888;
+  padding: 20px;
+}
