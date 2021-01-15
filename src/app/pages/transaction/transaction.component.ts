@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import * as moment from 'moment';
 import { IBarChart, ILineChart } from 'src/app/shared/_interface';
+import { ITransaction } from '../_interfaces';
 import { TransactionService } from '../_services';
 
 @Component({
@@ -13,22 +15,25 @@ export class TransactionComponent implements OnInit {
 
   constructor(private transactionService: TransactionService) {}
 
+  dateRange = new FormGroup({
+    start: new FormControl(),
+    end: new FormControl(),
+  });
+
   totalTransactionTitle: string = 'Total Transaction';
   totalTransactionData: ILineChart[];
+
   totalAmountTitle = 'Total Amount';
   totalAmountData: ILineChart[];
+
   expenseTypeTitle = 'Expense Type';
   expenseTypeData: IBarChart[];
+
   expenseAreas: string[] = [];
   selectedExpenseAreaOptions: string[] = [];
   selectedSliceOptions: number[] = [];
   sliceNumber: number[] = [];
   eventFireChecker: number;
-
-  dateRange = new FormGroup({
-    start: new FormControl(),
-    end: new FormControl(),
-  });
 
   ngOnInit(): void {
     this.createOrUpdateCharts();
@@ -51,12 +56,19 @@ export class TransactionComponent implements OnInit {
     dateRangeStart: HTMLInputElement,
     dateRangeEnd: HTMLInputElement
   ) {
-    if (
-      dateRangeStart.value !== undefined &&
-      dateRangeStart.value !== null &&
-      dateRangeEnd.value !== null &&
-      dateRangeEnd.value !== undefined
-    ) {
+    if (dateRangeStart.value) {
+      dateRangeStart.value = moment(dateRangeStart.value, 'MM/DD//YYYY').format(
+        'DD/MM/YYYY'
+      );
+    }
+
+    if (dateRangeEnd.value) {
+      dateRangeEnd.value = moment(dateRangeEnd.value, 'MM/DD//YYYY').format(
+        'DD/MM/YYYY'
+      );
+    }
+
+    if (dateRangeStart.value && dateRangeEnd.value) {
       this.createOrUpdateCharts();
     }
   }

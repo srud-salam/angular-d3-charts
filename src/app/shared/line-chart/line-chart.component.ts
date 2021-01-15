@@ -122,12 +122,14 @@ export class LineChartComponent implements OnChanges {
       .attr('y', (d, i) => i * 20)
       .text(this.lineChartTitle);
 
-    grp
-      .append('text')
-      .attr('class', 'line-chart-title-text')
-      .attr('x', innerWidth - 120)
-      .attr('y', 20)
-      .text(this.lineChartData[0].date.getFullYear());
+    if (this.lineChartData.length > 0) {
+      grp
+        .append('text')
+        .attr('class', 'line-chart-title-text')
+        .attr('x', innerWidth - 120)
+        .attr('y', 20)
+        .text(this.lineChartData[0].date.getFullYear());
+    }
   }
 
   onResize() {
