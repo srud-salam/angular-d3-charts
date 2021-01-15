@@ -13,6 +13,7 @@ import {
   toArray,
   distinct,
   filter,
+  shareReplay,
 } from 'rxjs/operators';
 import * as moment from 'moment';
 
@@ -21,18 +22,44 @@ import { IBarChart, ILineChart } from 'src/app/shared/_interface';
 import { environment } from 'src/environments/environment';
 import { LineChart } from 'src/app/shared/_models';
 
-const apiUrl = environment.apiUrl;
-
 @Injectable({
   providedIn: 'root',
 })
 export class TransactionService {
+  private apiUrl: string;
+  private cacheData: Observable<ITransaction[]>;
+  private cacheDuration: number;
+  private cacheDate: Date;
+  private cacheSize: number;
+
   parseDate = d3.timeParse('%d-%m-%Y');
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    this.apiUrl = environment.apiUrl;
+    this.cacheSize = environment.cacheSize;
+    this.cacheDuration = environment.cacheDuration * 1000;
+  }
+
+  get observableData() {
+    let cacheDateDiff = 0;
+    if (this.cacheDate) {
+      cacheDateDiff = new Date().valueOf() - this.cacheDate.valueOf();
+    }
+
+    if (
+      (!this.cacheData && !this.cacheDate) ||
+      this.cacheDuration < cacheDateDiff
+    ) {
+      this.cacheDate = new Date();
+      this.cacheData = this.getAll().pipe(shareReplay(this.cacheSize));
+      console.log('TEST', this.cacheData, this.cacheDate, this.cacheDuration);
+    }
+
+    return this.cacheData;
+  }
 
   getAll(): Observable<ITransaction[]> {
-    return this.http.get<ITransaction[]>(apiUrl).pipe(
+    return this.http.get<ITransaction[]>(this.apiUrl).pipe(
       tap((transactions: ITransaction[]) => transactions),
       catchError(this.handleError)
     );
@@ -42,7 +69,7 @@ export class TransactionService {
     expenseAreas: string[],
     dateRange: { start: Date; end: Date }
   ): Observable<IBarChart[]> {
-    return this.http.get<ITransaction[]>(apiUrl).pipe(
+    return this.observableData.pipe(
       mergeMap((transactions: ITransaction[]) =>
         from(transactions).pipe(
           filter(
@@ -88,7 +115,7 @@ export class TransactionService {
     expenseAreas: string[],
     dateRange: { start: Date; end: Date }
   ): Observable<ILineChart[]> {
-    return this.http.get<ITransaction[]>(apiUrl).pipe(
+    return this.observableData.pipe(
       mergeMap((transactions: ITransaction[]) =>
         from(transactions).pipe(
           filter(
@@ -122,7 +149,7 @@ export class TransactionService {
     expenseAreas: string[],
     dateRange: { start: Date; end: Date }
   ): Observable<ILineChart[]> {
-    return this.http.get<ITransaction[]>(apiUrl).pipe(
+    return this.observableData.pipe(
       mergeMap((transactions: ITransaction[]) =>
         from(transactions).pipe(
           filter(
@@ -167,7 +194,7 @@ export class TransactionService {
   }
 
   getExpenseArea(): Observable<string[]> {
-    return this.http.get<ITransaction[]>(apiUrl).pipe(
+    return this.observableData.pipe(
       mergeMap((transactions: ITransaction[]) => {
         return transactions.reduce(
           (arr, value) => [...arr, value.expenseArea],
@@ -179,6 +206,7 @@ export class TransactionService {
       catchError(this.handleError)
     );
   }
+
   private handleError(err: HttpErrorResponse): Observable<never> {
     // in a real world app, we may send the server to some remote logging infrastructure
     // instead of just logging it to the console
@@ -196,7 +224,7 @@ export class TransactionService {
   }
 
   private getDateRange(
-    dateRange: { start: Date; end: Date } | null | undefined,
+    dateRange: { start: Date; end: Date },
     transaction: ITransaction
   ) {
     const transactionDate: Date = this.parseDate(

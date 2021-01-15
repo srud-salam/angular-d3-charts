@@ -5,7 +5,11 @@
 export const environment = {
   production: false,
   apiUrl: 'api/transactions/transactions.json',
+  cacheDuration: 5000,
+  cacheSize: 1,
 };
+
+// cacheDuration is in second
 
 /*
  * For easier debugging in development mode, you can import the following file

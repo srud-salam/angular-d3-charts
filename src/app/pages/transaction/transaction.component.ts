@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import * as moment from 'moment';
 import { IBarChart, ILineChart } from 'src/app/shared/_interface';
-import { ITransaction } from '../_interfaces';
 import { TransactionService } from '../_services';
 
 @Component({
