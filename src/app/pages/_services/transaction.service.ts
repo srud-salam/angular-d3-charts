@@ -52,7 +52,6 @@ export class TransactionService {
     ) {
       this.cacheDate = new Date();
       this.cacheData = this.getAll().pipe(shareReplay(this.cacheSize));
-      console.log('TEST', this.cacheData, this.cacheDate, this.cacheDuration);
     }
 
     return this.cacheData;

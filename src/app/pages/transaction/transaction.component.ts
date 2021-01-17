@@ -95,7 +95,7 @@ export class TransactionComponent implements OnInit {
       .groupByExpenseType(expenseAreas, dateRange)
       .subscribe({
         next: (expenseType: IBarChart[]) => {
-          this.expenseTypeData = expenseType.sort((a, b) => b.value - a.value);
+          this.expenseTypeData = expenseType;
           if (this.selectedSliceOptions.length > 0) {
             this.expenseTypeData = this.expenseTypeData.slice(
               this.selectedSliceOptions[0]
@@ -115,8 +115,9 @@ export class TransactionComponent implements OnInit {
       .subscribe({
         next: (totalTransaction) => {
           this.totalTransactionData = totalTransaction.sort(
-            (a, b) => b.date.getTime() - a.date.getTime()
+            (a, b) => a.date.getTime() - b.date.getTime()
           );
+
           if (this.selectedSliceOptions.length > 0) {
             this.totalTransactionData = this.totalTransactionData.slice(
               this.selectedSliceOptions[0]
@@ -136,7 +137,7 @@ export class TransactionComponent implements OnInit {
       .subscribe({
         next: (totalAmount: ILineChart[]) => {
           this.totalAmountData = totalAmount.sort(
-            (a, b) => b.date.getTime() - a.date.getTime()
+            (a, b) => a.date.getTime() - b.date.getTime()
           );
           if (this.selectedSliceOptions.length > 0) {
             this.totalAmountData = this.totalAmountData.slice(

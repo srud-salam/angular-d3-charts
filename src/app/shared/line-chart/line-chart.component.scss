@@ -24,3 +24,28 @@
     min-height: 300px;
     margin: 20px 30px;
 }
+
+::ng-deep path { 
+    stroke: #ffab00;
+    stroke-width: 2;
+    fill: none;
+}
+
+::ng-deep .axis path,
+::ng-deep .axis line {
+    fill: none;
+    stroke: grey;
+    stroke-width: 1;
+    shape-rendering: crispEdges;
+}
+
+::ng-deep .tooltip-circle {
+    fill: none;
+    stroke: black;
+}
+
+::ng-deep .tooltip-x-line, ::ng-deep .tooltip-y-line {
+    opacity: 0.5;
+    stroke: black;
+    stroke-dasharray: 3,3;
+}
