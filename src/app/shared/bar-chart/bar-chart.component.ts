@@ -45,20 +45,24 @@ export class BarChartComponent implements OnChanges {
     const margin = {
       top: +this.getAttribute<number>('margin-top'),
       right: +this.getAttribute<number>('margin-right'),
-      bottom: +this.getAttribute<number>('margin-bottom') + 130,
-      left: +this.getAttribute<number>('margin-left') + 40,
+      bottom: +this.getAttribute<number>('margin-bottom') + 40,
+      left: +this.getAttribute<number>('margin-left') + 200, // need to caculate the larget length of text
     };
 
     const width = +this.getAttribute<number>('width');
     const height = +this.getAttribute<number>('height');
     const innerWidth = width - margin.left - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
+    const xScale = d3
+      .scaleLinear()
+      .domain([0, d3.max(this.barChartData, (d) => d.value)])
+      .rangeRound([0, innerWidth]);
 
-    const xScale = d3.scaleBand().rangeRound([0, innerWidth]).padding(0.2);
-    const yScale = d3.scaleLinear().rangeRound([innerHeight, 0]);
-
-    xScale.domain(this.barChartData.map((d) => d.key));
-    yScale.domain([0, d3.max(this.barChartData, (d) => d.value)]);
+    const yScale = d3
+      .scaleBand()
+      .domain(this.barChartData.map((d) => d.key))
+      .rangeRound([innerHeight, 0])
+      .padding(0.2);
 
     const grp = svg
       .append('g')
@@ -67,24 +71,13 @@ export class BarChartComponent implements OnChanges {
     grp
       .append('g')
       .attr('class', 'x axis')
-      .attr('transform', 'translate(' + 0 + ',' + innerHeight + ')')
+      .attr('transform', 'translate(0,' + innerHeight + ')')
       .call(d3.axisBottom(xScale))
       .selectAll('text')
-      .style('text-anchor', 'end')
-      .attr('dx', '-.8em')
-      .attr('dy', '.15em')
-      .attr('transform', 'rotate(-65)');
+      .attr('transform', 'translate(-10,0)rotate(-45)')
+      .style('text-anchor', 'end');
 
-    grp
-      .append('g')
-      .attr('class', 'y axis')
-      .call(d3.axisLeft(yScale).ticks(5))
-      .append('text')
-      .attr('transform', 'rotate(-90)')
-      .attr('y', 6)
-      .attr('dy', '0.71em')
-      .attr('text-anchor', 'end')
-      .text('Expense Type');
+    grp.append('g').attr('class', 'y axis').call(d3.axisLeft(yScale));
 
     grp
       .selectAll('.bar')
@@ -92,10 +85,10 @@ export class BarChartComponent implements OnChanges {
       .enter()
       .append('rect')
       .attr('class', 'bar')
-      .attr('x', (d) => xScale(d.key))
-      .attr('y', (d) => yScale(d.value))
-      .attr('width', xScale.bandwidth())
-      .attr('height', (d) => innerHeight - yScale(d.value));
+      .attr('x', xScale(0))
+      .attr('y', (d) => yScale(d.key))
+      .attr('width', (d) => xScale(d.value))
+      .attr('height', yScale.bandwidth());
 
     grp
       .append('rect')

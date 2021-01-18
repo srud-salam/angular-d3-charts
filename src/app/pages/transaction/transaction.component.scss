@@ -1,6 +1,17 @@
+.grid-container {
+  margin: 20px;
+}
+
 mat-grid-tile {
-  //border: 2px solid red;
   box-shadow: 0 0 4px #888888;
+}
+
+.mat-form-field {
+  display: block;
+  position: relative;
+  text-align: left;
+  border: 1px solid #888888;
+  padding: 20px;
 }
 
 ::ng-deep mat-selection-list {
@@ -27,10 +38,3 @@ mat-grid-tile {
   justify-content: center;
 }
 
-.mat-form-field {
-  display: block;
-  position: relative;
-  text-align: left;
-  border: 1px solid #888888;
-  padding: 20px;
-}

@@ -49,3 +49,12 @@
     stroke: black;
     stroke-dasharray: 3,3;
 }
+
+
+@media only screen and (max-width: 400px) 
+{
+    .chart {
+        width: 95%;
+        margin: 20px;
+    }
+} 

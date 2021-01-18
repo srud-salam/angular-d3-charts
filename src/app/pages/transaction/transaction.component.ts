@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
-import * as moment from 'moment';
-import { IBarChart, ILineChart } from 'src/app/shared/_interface';
+import { map } from 'rxjs/operators';
+import { Breakpoints, BreakpointObserver } from '@angular/cdk/layout';
 import { TransactionService } from '../_services';
+import { FormControl, FormGroup } from '@angular/forms';
+import { IBarChart, ILineChart } from 'src/app/shared/_interface';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-transaction',
@@ -12,7 +14,27 @@ import { TransactionService } from '../_services';
 export class TransactionComponent implements OnInit {
   errorMessage: string;
 
-  constructor(private transactionService: TransactionService) {}
+  gridLayout = this.breakpointObserver
+    .observe([Breakpoints.Handset, Breakpoints.Tablet])
+    .pipe(
+      map(({ matches }) => {
+        if (matches) {
+          return {
+            columns: 12,
+            control: { cols: 12, rows: 8 },
+            lineChart: { cols: 12, rows: 4 },
+            barChart: { cols: 12, rows: 33 },
+          };
+        }
+
+        return {
+          columns: 12,
+          control: { cols: 4, rows: 8 },
+          lineChart: { cols: 8, rows: 4 },
+          barChart: { cols: 12, rows: 20 },
+        };
+      })
+    );
 
   dateRange = new FormGroup({
     start: new FormControl(),
@@ -33,6 +55,11 @@ export class TransactionComponent implements OnInit {
   selectedSliceOptions: number[] = [];
   sliceNumber: number[] = [];
   eventFireChecker: number;
+
+  constructor(
+    private breakpointObserver: BreakpointObserver,
+    private transactionService: TransactionService
+  ) {}
 
   ngOnInit(): void {
     this.createOrUpdateCharts();
@@ -95,7 +122,7 @@ export class TransactionComponent implements OnInit {
       .groupByExpenseType(expenseAreas, dateRange)
       .subscribe({
         next: (expenseType: IBarChart[]) => {
-          this.expenseTypeData = expenseType;
+          this.expenseTypeData = expenseType.sort((a, b) => a.value - b.value);
           if (this.selectedSliceOptions.length > 0) {
             this.expenseTypeData = this.expenseTypeData.slice(
               this.selectedSliceOptions[0]

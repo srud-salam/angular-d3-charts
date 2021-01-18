@@ -86,7 +86,7 @@ export class LineChartComponent implements OnChanges {
       .append('g')
       .attr('class', 'x axis axis--x')
       .attr('transform', `translate(0,${innerHeight})`)
-      .call(d3.axisBottom(xScale));
+      .call(d3.axisBottom(xScale).ticks(innerWidth < 400 ? 5 : 10));
 
     grp
       .append('g')
@@ -129,14 +129,21 @@ export class LineChartComponent implements OnChanges {
     //add year anotation to x date
     grp
       .append('g')
-      .attr('transform', 'translate(' + 0 + ',' + innerHeight + ')')
+      .attr(
+        'transform',
+        'translate(' +
+          (innerWidth < 400 ? innerWidth : 0) +
+          ',' +
+          innerHeight +
+          ')'
+      )
       .append('text')
       .attr('fill', '#000')
       .attr('y', 6)
       .attr('dy', '0.71em')
       .attr('font-size', '0.71rem')
       .attr('text-anchor', 'end')
-      .text(this.startYear);
+      .text(innerWidth < 400 ? this.endYear : this.startYear);
 
     // line chart title text
     grp
