@@ -31,7 +31,7 @@ export class TransactionComponent implements OnInit {
           columns: 12,
           control: { cols: 4, rows: 8 },
           lineChart: { cols: 8, rows: 4 },
-          barChart: { cols: 12, rows: 20 },
+          barChart: { cols: 12, rows: 33 },
         };
       })
     );
